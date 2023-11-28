@@ -2,74 +2,46 @@
 #include "mashina.h"
 #include "myaka_igrashka.h"
 #include <fstream>
+#include <string>
 
-#include "igrashka.h"
-#include "mashina.h"
-#include "myaka_igrashka.h"
-#include <fstream>
 
-// Додамо метод для зчитування з файлу для кожного класу
-void ReadIgrashka(std::ifstream& inputFile, Igrashka& igrashka) {
-    std::string name;
-    inputFile >> name;
-    igrashka = Igrashka(name);
-}
+void Copyfile(const std::string& filedani, const std::string& filecopy) {
+    std::ifstream inputFile(filedani, std::ios::in);
+    std::ofstream outputFile(filecopy, std::ios::out);
 
-void ReadMashina(std::ifstream& inputFile, Mashina& mashina) {
-    std::string name, brand;
-    inputFile >> name >> brand;
-    mashina = Mashina(name, brand);
-}
+    if (inputFile.is_open() && outputFile.is_open()) {
+        std::string data;
+        while (inputFile >> data) {
+            outputFile << data << "\n";
+        }
 
-void ReadMyakaIgrashka(std::ifstream& inputFile, MyakaIgrashka& myakaIgrashka) {
-    std::string name, material;
-    inputFile >> name >> material;
-    myakaIgrashka = MyakaIgrashka(name, material);
+        inputFile.close();
+        outputFile.close();
+        std::cout << "Data copied successfully from " << filedani << " to " << filecopy << std::endl;
+    }
+    else {
+        std::cout << "Failed to open files!" << std::endl;
+    }
+
+    inputFile.close();
+    outputFile.close();
 }
 
 int main() {
-    // Відкриваємо вхідний файл
-    std::ifstream inputFile("output4laba.txt", std::ios::in);
+    std::ofstream outputFile("output4laba.txt", std::ios::out);
 
-    if (!inputFile) {
-        std::cout << "Unable to open file: output4laba.txt" << std::endl;
-        return 1;
-    }
+    Igrashka igrashka("Lego");
+    Mashina mashina("sportcar", "lamborghini");
+    MyakaIgrashka myakaIgrashka("teddy bear", "velour");
 
-    // Створюємо об'єкти для кожного класу
-    Igrashka igrashka;
-    Mashina mashina;
-    MyakaIgrashka myakaIgrashka;
+    igrashka.Print(outputFile);
+    mashina.Print(outputFile);
+    myakaIgrashka.Print(outputFile);
 
-    // Зчитуємо дані для кожного класу
-    ReadIgrashka(inputFile, igrashka);
-    ReadMashina(inputFile, mashina);
-    ReadMyakaIgrashka(inputFile, myakaIgrashka);
-
-    // Закриваємо вхідний файл
-    inputFile.close();
-
-    // Створюємо нові об'єкти на основі прочитаних даних
-    Igrashka igrashka2(igrashka);
-    Mashina mashina2(mashina);
-    MyakaIgrashka myakaIgrashka2(myakaIgrashka);
-
-    // Відкриваємо вихідний файл для запису
-    std::ofstream outputFile("output_combined.txt", std::ios::out);
-
-    if (!outputFile) {
-        std::cout << "Unable to open file: output_combined.txt" << std::endl;
-        return 1;
-    }
-
-    // Записуємо дані у вихідний файл
-    igrashka2.Print(outputFile);
-    mashina2.Print(outputFile);
-    myakaIgrashka2.Print(outputFile);
-
-    // Закриваємо вихідний файл
     outputFile.close();
+
+
+    Copyfile("output4laba.txt", "copied_data.txt");
 
     return 0;
 }
-
